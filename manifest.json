@@ -1,8 +1,8 @@
 {
-  "name": "مبل‌شویی آنلاین",
-  "short_name": "مبل‌شویی",
-  "description": "نوبت‌دهی آنلاین مبل‌شویی",
-  "start_url": "/index.html",
+  "name": "مبل‌شویی گنجی",
+  "short_name": "گنجی",
+  "description": "نوبت‌دهی آنلاین مبل‌شویی گنجی",
+  "start_url": "/mable-shooi/",
   "display": "standalone",
   "background_color": "#f8faff",
   "theme_color": "#1a6bff",
@@ -11,13 +11,13 @@
   "dir": "rtl",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "https://mohammadkyta572-cpu.github.io/mable-shooi/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icon-512.png",
+      "src": "https://mohammadkyta572-cpu.github.io/mable-shooi/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
