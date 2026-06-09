@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مبل‌شویی - نوبت‌دهی آنلاین</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1a6bff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="مبل‌شویی">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --blue: #1a6bff; --blue-light: #e8f0ff; --blue-dark: #0047cc;
+    --text: #1a1a2e; --text-muted: #6b7280; --border: #e5e7eb;
+    --white: #ffffff; --success: #10b981; --bg: #f8faff;
+  }
+  body { font-family: 'Vazirmatn', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .header { background: var(--blue); color: white; padding: 20px 16px; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(26,107,255,0.3); }
+  .header h1 { font-size: 20px; font-weight: 700; }
+  .header p { font-size: 13px; opacity: 0.85; margin-top: 4px; }
+  .nav-tabs { display: flex; background: white; border-bottom: 2px solid var(--border); position: sticky; top: 72px; z-index: 99; }
+  .nav-tab { flex: 1; padding: 14px; text-align: center; font-size: 14px; font-weight: 500; cursor: pointer; color: var(--text-muted); border-bottom: 3px solid transparent; transition: all 0.2s; background: none; border-top: none; border-left: none; border-right: none; font-family: 'Vazirmatn', sans-serif; }
+  .nav-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+  .page { display: none; padding: 20px 16px 40px; }
+  .page.active { display: block; }
+  .card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 16px; }
+  .card-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .card-title span { font-size: 20px; }
+  .form-group { margin-bottom: 16px; }
+  label { display: block; font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+  input, select, textarea { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; font-family: 'Vazirmatn', sans-serif; color: var(--text); background: white; transition: border-color 0.2s; outline: none; }
+  input:focus, select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,107,255,0.1); }
+  input::placeholder { color: #aaa; }
+  .time-slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .time-slot { padding: 10px 6px; border: 1.5px solid var(--border); border-radius: 10px; text-align: center; cursor: pointer; font-size: 12px; font-weight: 500; color: var(--text-muted); transition: all 0.2s; background: white; font-family: 'Vazirmatn', sans-serif; }
+  .time-slot:hover { border-color: var(--blue); color: var(--blue); }
+  .time-slot.selected { background: var(--blue); border-color: var(--blue); color: white; }
+  .time-slot .icon { font-size: 18px; display: block; margin-bottom: 4px; }
+  .furniture-types { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .furniture-type { padding: 12px; border: 1.5px solid var(--border); border-radius: 10px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text-muted); transition: all 0.2s; background: white; font-family: 'Vazirmatn', sans-serif; }
+  .furniture-type:hover { border-color: var(--blue); color: var(--blue); }
+  .furniture-type.selected { background: var(--blue-light); border-color: var(--blue); color: var(--blue); }
+  .furniture-type .icon { font-size: 24px; display: block; margin-bottom: 6px; }
+  .btn-submit { width: 100%; padding: 16px; background: var(--blue); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; font-family: 'Vazirmatn', sans-serif; cursor: pointer; transition: background 0.2s, transform 0.1s; margin-top: 8px; }
+  .btn-submit:hover { background: var(--blue-dark); }
+  .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; }
+  .success-box { display: none; background: white; border-radius: 16px; padding: 32px 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .success-box.show { display: block; }
+  .success-icon { width: 72px; height: 72px; background: #ecfdf5; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 16px; }
+  .success-box h2 { font-size: 20px; color: var(--success); margin-bottom: 8px; }
+  .success-box p { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
+  .booking-summary { background: var(--blue-light); border-radius: 12px; padding: 16px; text-align: right; margin-bottom: 20px; }
+  .summary-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; border-bottom: 1px solid rgba(26,107,255,0.1); }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row .label { color: var(--text-muted); }
+  .summary-row .value { font-weight: 600; color: var(--text); }
+  .btn-new { padding: 12px 24px; background: var(--blue-light); color: var(--blue); border: none; border-radius: 10px; font-size: 14px; font-weight: 600; font-family: 'Vazirmatn', sans-serif; cursor: pointer; }
+  .admin-login { background: white; border-radius: 16px; padding: 24px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .admin-login h2 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+  .admin-login p { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+  .booking-list { display: flex; flex-direction: column; gap: 12px; }
+  .booking-item { background: white; border-radius: 12px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border-right: 4px solid var(--blue); }
+  .booking-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .booking-name { font-size: 15px; font-weight: 600; }
+  .booking-badge { background: var(--blue-light); color: var(--blue); padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .booking-details { display: flex; flex-direction: column; gap: 4px; }
+  .booking-detail { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); }
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+  .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+  .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .admin-header h2 { font-size: 16px; font-weight: 600; }
+  .badge-count { background: var(--blue); color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  .btn-logout { padding: 8px 16px; background: #fee2e2; color: #ef4444; border: none; border-radius: 8px; font-size: 12px; font-weight: 600; font-family: 'Vazirmatn', sans-serif; cursor: pointer; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🛋️ مبل‌شویی آنلاین</h1>
+  <p>نوبت‌دهی سریع و آسان</p>
+</div>
+
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="showPage('booking')">📅 ثبت نوبت</button>
+  <button class="nav-tab" onclick="showPage('admin')">⚙️ پنل مدیریت</button>
+</div>
+
+<div class="page active" id="page-booking">
+  <div id="booking-form">
+    <div class="card">
+      <div class="card-title"><span>👤</span> اطلاعات شما</div>
+      <div class="form-group">
+        <label>نام و نام خانوادگی</label>
+        <input type="text" id="name" placeholder="مثال: علی رضایی">
+      </div>
+      <div class="form-group">
+        <label>شماره تماس</label>
+        <input type="tel" id="phone" placeholder="09xxxxxxxxx">
+      </div>
+      <div class="form-group">
+        <label>آدرس</label>
+        <input type="text" id="address" placeholder="شهر، خیابان، کوچه، پلاک">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>🛋️</span> نوع مبلمان</div>
+      <div class="furniture-types">
+        <button class="furniture-type" onclick="selectFurniture(this, 'مبل')"><span class="icon">🛋️</span> مبل</button>
+        <button class="furniture-type" onclick="selectFurniture(this, 'صندلی')"><span class="icon">🪑</span> صندلی</button>
+        <button class="furniture-type" onclick="selectFurniture(this, 'فرش')"><span class="icon">🎨</span> فرش</button>
+        <button class="furniture-type" onclick="selectFurniture(this, 'سایر')"><span class="icon">📦</span> سایر</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>📅</span> تاریخ مراجعه</div>
+      <div class="form-group">
+        <input type="date" id="date">
+      </div>
+      <div class="card-title" style="margin-top:8px"><span>🕐</span> بازه زمانی</div>
+      <div class="time-slots">
+        <button class="time-slot" onclick="selectTime(this, 'صبح ۸-۱۲')"><span class="icon">🌅</span> صبح<br>۸ تا ۱۲</button>
+        <button class="time-slot" onclick="selectTime(this, 'بعدازظهر ۱۲-۱۷')"><span class="icon">☀️</span> ظهر<br>۱۲ تا ۱۷</button>
+        <button class="time-slot" onclick="selectTime(this, 'عصر ۱۷-۲۱')"><span class="icon">🌆</span> عصر<br>۱۷ تا ۲۱</button>
+      </div>
+    </div>
+
+    <button class="btn-submit" onclick="submitBooking()">✅ ثبت نوبت</button>
+  </div>
+
+  <div class="success-box" id="success-box">
+    <div class="success-icon">✅</div>
+    <h2>نوبت شما ثبت شد!</h2>
+    <p>به زودی با شماره شما تماس می‌گیریم</p>
+    <div class="booking-summary" id="summary-content"></div>
+    <button class="btn-new" onclick="newBooking()">➕ ثبت نوبت جدید</button>
+  </div>
+</div>
+
+<div class="page" id="page-admin">
+  <div class="admin-login" id="admin-login">
+    <h2>🔐 ورود مدیریت</h2>
+    <p>رمز عبور پیش‌فرض: ۱۲۳۴</p>
+    <div class="form-group">
+      <label>رمز عبور</label>
+      <input type="password" id="admin-pass" placeholder="رمز عبور را وارد کنید">
+    </div>
+    <button class="btn-submit" onclick="adminLogin()">ورود</button>
+  </div>
+
+  <div id="admin-panel" style="display:none">
+    <button class="btn-logout" onclick="adminLogout()">🚪 خروج</button>
+    <div class="admin-header">
+      <h2>📋 لیست نوبت‌ها</h2>
+      <span class="badge-count" id="booking-count">۰ نوبت</span>
+    </div>
+    <div class="booking-list" id="booking-list"></div>
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://zavjeljlototgzddfdrf.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InphdmplbGpsb3RvdGd6ZGRmZHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0MzYzNjAsImV4cCI6MjA5NjAxMjM2MH0.-qUFynxjMOfltoQftVptkpcfzSU34Y8r5mzX3xyfX5g';
+
+  async function dbRequest(method, body = null) {
+    const url = SUPABASE_URL + '/rest/v1/bookings' + (method === 'GET' ? '?order=created_at.desc' : '');
+    const options = {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Prefer': method === 'POST' ? 'return=representation' : ''
+      }
+    };
+    if (body) options.body = JSON.stringify(body);
+    const res = await fetch(url, options);
+    return res.json();
+  }
+
+  let selectedFurniture = '';
+  let selectedTime = '';
+
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('date').min = today;
+
+  function showPage(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('page-' + page).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  function selectFurniture(el, type) {
+    document.querySelectorAll('.furniture-type').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedFurniture = type;
+  }
+
+  function selectTime(el, time) {
+    document.querySelectorAll('.time-slot').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedTime = time;
+  }
+
+  async function submitBooking() {
+    const name = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const address = document.getElementById('address').value.trim();
+    const date = document.getElementById('date').value;
+
+    if (!name || !phone || !address || !date || !selectedFurniture || !selectedTime) {
+      alert('لطفاً همه فیلدها را پر کنید');
+      return;
+    }
+
+    const btn = document.querySelector('.btn-submit');
+    btn.textContent = '⏳ در حال ثبت...';
+    btn.disabled = true;
+
+    try {
+      await dbRequest('POST', { name, phone, address, date, furniture: selectedFurniture, time_slot: selectedTime });
+      document.getElementById('booking-form').style.display = 'none';
+      document.getElementById('success-box').classList.add('show');
+      const dateStr = new Date(date).toLocaleDateString('fa-IR');
+      document.getElementById('summary-content').innerHTML = `
+        <div class="summary-row"><span class="label">نام</span><span class="value">${name}</span></div>
+        <div class="summary-row"><span class="label">تلفن</span><span class="value">${phone}</span></div>
+        <div class="summary-row"><span class="label">نوع</span><span class="value">${selectedFurniture}</span></div>
+        <div class="summary-row"><span class="label">تاریخ</span><span class="value">${dateStr}</span></div>
+        <div class="summary-row"><span class="label">ساعت</span><span class="value">${selectedTime}</span></div>`;
+    } catch(e) {
+      alert('خطا در ثبت نوبت. اینترنت را بررسی کنید.');
+    }
+    btn.textContent = '✅ ثبت نوبت';
+    btn.disabled = false;
+  }
+
+  function newBooking() {
+    document.getElementById('booking-form').style.display = 'block';
+    document.getElementById('success-box').classList.remove('show');
+    ['name','phone','address','date'].forEach(id => document.getElementById(id).value = '');
+    document.querySelectorAll('.furniture-type,.time-slot').forEach(b => b.classList.remove('selected'));
+    selectedFurniture = ''; selectedTime = '';
+  }
+
+  function adminLogin() {
+    if (document.getElementById('admin-pass').value === '1234') {
+      document.getElementById('admin-login').style.display = 'none';
+      document.getElementById('admin-panel').style.display = 'block';
+      renderBookings();
+    } else {
+      alert('رمز عبور اشتباه است');
+    }
+  }
+
+  function adminLogout() {
+    document.getElementById('admin-login').style.display = 'block';
+    document.getElementById('admin-panel').style.display = 'none';
+    document.getElementById('admin-pass').value = '';
+  }
+
+  async function renderBookings() {
+    const list = document.getElementById('booking-list');
+    const count = document.getElementById('booking-count');
+    list.innerHTML = '<div class="empty-state"><div class="icon">⏳</div><p>در حال بارگذاری...</p></div>';
+    try {
+      const bookings = await dbRequest('GET');
+      const p = n => n.toString().replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+      count.textContent = p(bookings.length) + ' نوبت';
+      if (!bookings.length) {
+        list.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>هنوز نوبتی ثبت نشده است</p></div>';
+        return;
+      }
+      list.innerHTML = bookings.map(b => `
+        <div class="booking-item">
+          <div class="booking-item-header">
+            <span class="booking-name">${b.name}</span>
+            <span class="booking-badge">${b.furniture}</span>
+          </div>
+          <div class="booking-details">
+            <div class="booking-detail">📞 ${b.phone}</div>
+            <div class="booking-detail">📍 ${b.address}</div>
+            <div class="booking-detail">📅 ${new Date(b.date).toLocaleDateString('fa-IR')} — ${b.time_slot}</div>
+          </div>
+        </div>`).join('');
+    } catch(e) {
+      list.innerHTML = '<div class="empty-state"><div class="icon">❌</div><p>خطا در بارگذاری</p></div>';
+    }
+  }
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
+  }
+
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('install-btn').style.display = 'block';
+  });
+
+  function installApp() {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => {
+        deferredPrompt = null;
+        document.getElementById('install-btn').style.display = 'none';
+      });
+    }
+  }
+</script>
+
+<div id="install-btn" style="display:none; position:fixed; bottom:20px; left:16px; right:16px; z-index:999;">
+  <button onclick="installApp()" style="width:100%; padding:14px; background:#1a6bff; color:white; border:none; border-radius:12px; font-size:15px; font-weight:600; font-family:'Vazirmatn',sans-serif; cursor:pointer; box-shadow:0 4px 16px rgba(26,107,255,0.4);">
+    📲 نصب اپ روی موبایل
+  </button>
+</div>
+
+</body>
+</html>
